@@ -56,3 +56,42 @@ export interface SignupData {
 export interface SignupVars extends LoginVars {
   name: string
 }
+
+export interface LinkInput {
+  url: string
+  description: string
+}
+
+export interface PostData {
+  post: Link
+}
+
+export type PostVars = LinkInput
+
+export interface UpdateLinkData {
+  updateLink: Link
+}
+
+export interface UpdateLinkVars extends Partial<LinkInput> {
+  id: string
+}
+
+export interface DeleteLinkData {
+  deleteLink: Pick<Link, 'id'>
+}
+
+export interface DeleteLinkVars {
+  id: string
+}
+
+export interface NewLinkData {
+  newLink: Link | null
+}
+
+export interface UpdatedLinkData {
+  updatedLink: Link | null
+}
+
+export interface DeletedLinkData {
+  deletedLink: string | null
+}

@@ -13,3 +13,5 @@ export const FEED_QUERY: TypedDocumentNode<FeedData, FeedVars> = gql`
   }
   ${LINK_FIELDS}
 `
+
+export const FEED_VARIABLES: FeedVars = { orderBy: { createdAt: 'desc' } }
