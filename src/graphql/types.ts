@@ -35,6 +35,18 @@ export interface FeedVars {
   orderBy?: LinkOrderByInput
 }
 
+export interface LinkData {
+  link: Link | null
+}
+
+export interface LinkVars {
+  id: string
+}
+
+export interface MeData {
+  me: AuthUser | null
+}
+
 export interface AuthPayload {
   token: string
   user: AuthUser

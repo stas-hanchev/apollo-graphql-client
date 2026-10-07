@@ -26,7 +26,7 @@ const errorLink = new ErrorLink(({ error }) => {
   if (
     token &&
     CombinedGraphQLErrors.is(error) &&
-    error.errors.some((e) => e.message === 'Not authenticated')
+    error.errors.some((e) => e.extensions?.code === 'UNAUTHENTICATED')
   ) {
     logout()
   }
@@ -51,5 +51,18 @@ const link = ApolloLink.split(
 
 export const client = new ApolloClient({
   link,
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    typePolicies: {
+      Query: {
+        fields: {
+          link: {
+            read: (existing, { args, toReference, canRead }) => {
+              const ref = args?.id ? toReference({ __typename: 'Link', id: args.id }) : undefined
+              return ref && canRead(ref) ? ref : existing
+            },
+          },
+        },
+      },
+    },
+  }),
 })
