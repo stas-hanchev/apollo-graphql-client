@@ -1,10 +1,10 @@
 import { useMemo } from 'react'
-import { CssBaseline, Toolbar, useMediaQuery } from '@mui/material'
+import { CssBaseline, useMediaQuery } from '@mui/material'
 import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles'
 import { ThemeProvider } from 'styled-components'
-import LinkList from './components/LinkList'
+import { RouterProvider } from 'react-router/dom'
+import { router } from './router'
 import { createAppTheme } from './theme/theme'
-import { Header, Layout, Logo, Main } from './styled/App.styled'
 
 function App() {
   const prefersDark = useMediaQuery('(prefers-color-scheme: dark)')
@@ -14,16 +14,7 @@ function App() {
     <MuiThemeProvider theme={theme}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Layout maxWidth="md" disableGutters>
-          <Header position="static" elevation={0}>
-            <Toolbar variant="dense">
-              <Logo>Hacker News</Logo>
-            </Toolbar>
-          </Header>
-          <Main>
-            <LinkList />
-          </Main>
-        </Layout>
+        <RouterProvider router={router} />
       </ThemeProvider>
     </MuiThemeProvider>
   )
