@@ -1,5 +1,6 @@
 import { useMutation } from '@apollo/client/react'
 import { useNavigate } from 'react-router'
+import { invalidateFeed } from '../apollo/linkCache'
 import LinkForm from '../components/LinkForm'
 import { POST_MUTATION } from '../graphql/mutations'
 import type { LinkInput } from '../graphql/types'
@@ -8,10 +9,7 @@ import { paths } from '../routes/paths'
 function CreateLinkPage() {
   const navigate = useNavigate()
   const [post, { loading, error }] = useMutation(POST_MUTATION, {
-    update: (cache) => {
-      cache.evict({ fieldName: 'feed' })
-      cache.gc()
-    },
+    update: (cache) => invalidateFeed(cache),
   })
 
   const handleSubmit = async (values: LinkInput) => {

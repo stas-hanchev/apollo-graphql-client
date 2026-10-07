@@ -1,5 +1,5 @@
 import { useSubscription } from '@apollo/client/react'
-import { addLinkToFeed, removeLinkFromCache } from '../apollo/linkCache'
+import { invalidateFeed, removeLinkFromCache } from '../apollo/linkCache'
 import {
   DELETED_LINK_SUBSCRIPTION,
   NEW_LINK_SUBSCRIPTION,
@@ -10,8 +10,7 @@ export function useLinkSubscriptions() {
   useSubscription(NEW_LINK_SUBSCRIPTION, {
     ignoreResults: true,
     onData: ({ client, data }) => {
-      const link = data.data?.newLink
-      if (link) addLinkToFeed(client.cache, link)
+      if (data.data?.newLink) invalidateFeed(client.cache)
     },
   })
 
