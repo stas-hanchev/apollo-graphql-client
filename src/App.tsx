@@ -1,19 +1,32 @@
-import { gql } from '@apollo/client'
-import { useQuery } from '@apollo/client/react'
-
-const INFO_QUERY = gql`
-  query Info {
-    info
-  }
-`
+import { useMemo } from 'react'
+import { CssBaseline, Toolbar, useMediaQuery } from '@mui/material'
+import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles'
+import { ThemeProvider } from 'styled-components'
+import LinkList from './components/LinkList'
+import { createAppTheme } from './theme/theme'
+import { Header, Layout, Logo, Main } from './styled/App.styled'
 
 function App() {
-  const { data, loading, error } = useQuery<{ info: string }>(INFO_QUERY)
+  const prefersDark = useMediaQuery('(prefers-color-scheme: dark)')
+  const theme = useMemo(() => createAppTheme(prefersDark ? 'dark' : 'light'), [prefersDark])
 
-  if (loading) return <p>Loading…</p>
-  if (error) return <p>Error: {error.message}</p>
-
-  return <h1>{data?.info}</h1>
+  return (
+    <MuiThemeProvider theme={theme}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Layout maxWidth="md" disableGutters>
+          <Header position="static" elevation={0}>
+            <Toolbar variant="dense">
+              <Logo>Hacker News</Logo>
+            </Toolbar>
+          </Header>
+          <Main>
+            <LinkList />
+          </Main>
+        </Layout>
+      </ThemeProvider>
+    </MuiThemeProvider>
+  )
 }
 
 export default App
