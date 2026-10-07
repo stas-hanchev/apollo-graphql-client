@@ -11,10 +11,15 @@ function parsePage(value: string | null): number {
   return Number.isInteger(page) && page > 0 ? page : 1
 }
 
-function LinkList() {
+interface Props {
+  filter?: string
+  emptyText?: string
+}
+
+function LinkList({ filter, emptyText = 'No links yet.' }: Props) {
   const [searchParams, setSearchParams] = useSearchParams()
   const page = parsePage(searchParams.get('page'))
-  const variables = feedPageVariables(page)
+  const variables = feedPageVariables(page, filter)
 
   const { data, previousData, loading, error } = useQuery(FEED_QUERY, { variables })
 
@@ -46,7 +51,7 @@ function LinkList() {
   if (error) return <Alert severity="error">Error: {error.message}</Alert>
 
   const links = feed?.links ?? []
-  if (links.length === 0) return outOfRange ? null : <Status>No links yet.</Status>
+  if (links.length === 0) return outOfRange ? null : <Status>{emptyText}</Status>
 
   return (
     <>

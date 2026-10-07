@@ -18,6 +18,11 @@ export const FEED_PAGE_SIZE = 10
 
 export const FEED_VARIABLES: FeedVars = { orderBy: { createdAt: 'desc' } }
 
-export function feedPageVariables(page: number): FeedVars {
-  return { ...FEED_VARIABLES, skip: (page - 1) * FEED_PAGE_SIZE, take: FEED_PAGE_SIZE }
+export function feedPageVariables(page: number, filter?: string): FeedVars {
+  return {
+    ...FEED_VARIABLES,
+    ...(filter ? { filter } : {}),
+    skip: (page - 1) * FEED_PAGE_SIZE,
+    take: FEED_PAGE_SIZE,
+  }
 }
