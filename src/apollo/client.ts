@@ -1,5 +1,6 @@
-import { ApolloClient, ApolloLink, HttpLink, InMemoryCache } from '@apollo/client'
+import { ApolloClient, ApolloLink, CombinedGraphQLErrors, HttpLink, InMemoryCache } from '@apollo/client'
 import { SetContextLink } from '@apollo/client/link/context'
+import { ErrorLink } from '@apollo/client/link/error'
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions'
 import { OperationTypeNode } from 'graphql'
 import { createClient } from 'graphql-ws'
@@ -10,7 +11,6 @@ const WS_URL = import.meta.env.VITE_GRAPHQL_WS_URL ?? 'ws://localhost:4000/graph
 
 const httpLink = new HttpLink({ uri: HTTP_URL })
 
-// Reads the token on every request, so login/logout take effect immediately.
 const authLink = new SetContextLink(({ headers }) => {
   const { token } = useAuthStore.getState()
   return {
@@ -18,6 +18,17 @@ const authLink = new SetContextLink(({ headers }) => {
       ...headers,
       ...(token ? { authorization: `Bearer ${token}` } : {}),
     },
+  }
+})
+
+const errorLink = new ErrorLink(({ error }) => {
+  const { token, logout } = useAuthStore.getState()
+  if (
+    token &&
+    CombinedGraphQLErrors.is(error) &&
+    error.errors.some((e) => e.message === 'Not authenticated')
+  ) {
+    logout()
   }
 })
 
@@ -32,11 +43,10 @@ const wsLink = new GraphQLWsLink(
   }),
 )
 
-// Subscriptions go over WebSocket, queries and mutations over HTTP.
 const link = ApolloLink.split(
   ({ operationType }) => operationType === OperationTypeNode.SUBSCRIPTION,
   wsLink,
-  authLink.concat(httpLink),
+  ApolloLink.from([errorLink, authLink, httpLink]),
 )
 
 export const client = new ApolloClient({

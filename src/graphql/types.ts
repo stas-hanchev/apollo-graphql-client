@@ -1,3 +1,5 @@
+import type { AuthUser } from '../stores/auth'
+
 export type Sort = 'asc' | 'desc'
 
 export interface LinkOrderByInput {
@@ -31,4 +33,26 @@ export interface FeedVars {
   skip?: number
   take?: number
   orderBy?: LinkOrderByInput
+}
+
+export interface AuthPayload {
+  token: string
+  user: AuthUser
+}
+
+export interface LoginData {
+  login: AuthPayload
+}
+
+export interface LoginVars {
+  email: string
+  password: string
+}
+
+export interface SignupData {
+  signup: AuthPayload
+}
+
+export interface SignupVars extends LoginVars {
+  name: string
 }
